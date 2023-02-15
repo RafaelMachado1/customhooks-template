@@ -1,36 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { BASE_URL } from "./constants/constants";
 import axios from "axios";
-import {Title,NameContainer,PostContainer } from './style'
+import { Title, NameContainer, PostContainer } from './style'
 import { GlobalStyle } from './GlobalStyle'
 import { Header } from './components/Header/Header'
 import { Card } from './components/Card/Card'
+import { useCapturaNome } from "./hook/useCapturaNome";
+import { useCapturaPostagem } from "./hook/useCapturaPostagem";
+import { useBuscaDados } from "./hook/useBuscaDados";
+
 function App() {
-  const [nomeUsuarios, setNomeUsuarios] = useState([]);
-  const [postagens, setPostagens] = useState([]);
+//Buscar informações dos usuário, não é responsabilidade do App.js
 
-  useEffect(() => {
-    axios
-      .get(`${BASE_URL}users`)
-      .then((response) => {
-        setNomeUsuarios(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
+//chamada da APi atravez do Custom hook
+//const nomeUsuarios = useCapturaNome();
+//const postagens = useCapturaPostagem();
 
-
-  useEffect(() => {
-    axios
-      .get(`${BASE_URL}comments`)
-      .then((response) => {
-        setPostagens(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  });
+  //Chamada da Api através do Hook generico useBuscaDados criado para chamar qualquer dado da APi
+  //Nesse caso tem que passar a url por parametro e passar o array vazio no final
+  const nomeUsuarios = useBuscaDados(`${BASE_URL}users`, [])
+  const postagens = useBuscaDados(`${BASE_URL}comments`, [])
 
   return (
     <div>
@@ -39,13 +28,13 @@ function App() {
       <Title>Nomes dos usuários</Title>
       <NameContainer>
         {nomeUsuarios.map((usuario) => {
-          return(
-          <Card 
-          key={usuario.id} 
-          text={usuario.name} 
-          backgroudColor={'nome'}
-          textColor={'nome'}
-          />)
+          return (
+            <Card
+              key={usuario.id}
+              text={usuario.name}
+              backgroudColor={'nome'}
+              textColor={'nome'}
+            />)
         })}
       </NameContainer>
 
@@ -53,16 +42,16 @@ function App() {
       <Title>Comentários dos usuários</Title>
       <PostContainer>
 
-      {postagens.map((post) => {
-        //console.log(post);
-        return(
-          <Card 
-          key={post.id} 
-          text={post.body} 
-          backgroudColor={'#1dc690'}
-          textColor={'#ffffff'}
-          />)
-      })}
+        {postagens.map((post) => {
+          //console.log(post);
+          return (
+            <Card
+              key={post.id}
+              text={post.body}
+              backgroudColor={'#1dc690'}
+              textColor={'#ffffff'}
+            />)
+        })}
       </PostContainer>
     </div>
   );
